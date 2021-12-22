@@ -8,32 +8,39 @@ import uuid from 'uuid-random';
 
 
 
-export default function ToDoList({navigation}) {
+export default function ToDoList() {
     // receive state and dispatch from App.js
     const { state, dispatch } = useContext(TodosContext);
     const [todoText, setTodoText] = useState("")
-    // const [editMode, setEditMode] = useState(false)
-    // const [editTodo, setEditTodo] = useState(null)
-    // const buttonTitle = editMode ? "Edit" : "Add";
-    const buttonTitle = "Add";
+    const [editMode, setEditMode] = useState(false)
+    const [editTodo, setEditTodo] = useState(null)
+    const buttonTitle = editMode ? "Edit" : "Add";
 
     const deleteRow = (todo) => {
         dispatch({ type: 'delete', payload: todo });
     };
 
-    const handleSubmit = () =>{
-        const newToDo = {id: uuid(), text: todoText};
-        dispatch({type: 'add', payload: newToDo});
-        setTodoText('');
+    const handleSubmit = () => {
+        if (editMode) {
+            dispatch({ type: 'edit', payload: { ...editTodo, text: todoText } })
+            setEditMode(false)
+            setEditTodo(null)
+        } else {
+            const newToDo = { id: uuid(), text: todoText };
+            dispatch({ type: 'add', payload: newToDo })
         }
+        setTodoText('') // to clear field after adding
+    }
 
 
-        const editRow = (todo,rowMap) => {
-            if (rowMap[todo.id]) {
+    const editRow = (todo, rowMap) => {
+        setTodoText(todo.text)
+        setEditMode(true)
+        setEditTodo(todo)
+        if (rowMap[todo.id]) {
             rowMap[todo.id].closeRow();
-            }
-            navigation.navigate('ToDoDetail', todo)
-            };
+        }
+    };
 
     const renderItem = data => (
         <View style={styles.rowFront}>

@@ -1,6 +1,9 @@
 import React, { useReducer } from 'react';
 import { NativeBaseProvider, Box, Button, VStack , Text, Center } from 'native-base';
 import ToDoList from './ToDoList';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import ToDoDetail from './ToDoDetail';
 
 const todosInitialState = {
   todos:[
@@ -12,7 +15,7 @@ const todosInitialState = {
 
   export const TodosContext = React.createContext()
 
-
+  const Stack = createStackNavigator();
 
 export default function App() {
 
@@ -21,8 +24,13 @@ export default function App() {
 
   return (
     <TodosContext.Provider value={{state,dispatch}}>
+      <NavigationContainer>
     <NativeBaseProvider>
-    <ToDoList />
+    <Stack.Navigator initialRouteName="ToDoList">
+<Stack.Screen name="ToDoList" component={ToDoList} />
+<Stack.Screen name="ToDoDetail" component={ToDoDetail} />
+</Stack.Navigator>
+    {/* <ToDoList /> */}
       {/* <VStack alignItems="center"  mt="10"  space={3} >
           <Box>
           <Text>Count: {state.count}</Text>
@@ -41,6 +49,7 @@ export default function App() {
       </Button>
     </VStack> */}
     </NativeBaseProvider>
+    </NavigationContainer>
     </TodosContext.Provider>
   );
 }
